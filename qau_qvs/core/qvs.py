@@ -1,9 +1,14 @@
 import numpy as np
 import random
 from typing import Dict, Tuple, List, Optional, Any, Union, Callable
-from .asc import ASC
-from .rpw import RPW
-from .ncb import NCB
+try:
+    from qau_qvs.core.asc import ASC
+    from qau_qvs.core.rpw import RPW
+    from qau_qvs.core.ncb import NCB
+except (ImportError, ModuleNotFoundError):
+    from .asc import ASC
+    from .rpw import RPW
+    from .ncb import NCB
 
 class QVS:
     """
@@ -36,8 +41,8 @@ class QVS:
 
     def delete_asc(self, asc_id: str):
         if asc_id in self.ascs:
-            del self.ascs[asc_id]
-            del self.pending_rotations[asc_id]
+            self.ascs.pop(asc_id, None)
+            self.pending_rotations.pop(asc_id, None)
 
     def get_asc(self, asc_id: str) -> ASC:
         if asc_id not in self.ascs:
@@ -139,6 +144,6 @@ class QVS:
             p = np.array([abs(temp_asc.amplitudes[s])**2 for s in states])
             p /= p.sum()
             outcome = states[np.random.choice(len(states), p=p)]
-            results[outcome] = results.get(outcome, 0) + (1/trials)
+            results[outcome] = results.get(outcome, 0.0) + (1.0 / trials)
             
         return results
