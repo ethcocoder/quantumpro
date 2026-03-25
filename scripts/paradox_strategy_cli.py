@@ -7,8 +7,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from qau_qvs.core.qvs import QVS
 from qau_qvs.ai.paradox import ParadoxEngine
 from qau_qvs.ai.wikipedia_ingest import WikipediaSubstrateIngestion
+from qau_qvs.ai.manifold_scrubber import ManifoldScrubber
 
 def paradox_strategy_interrogator():
+    scrubber = ManifoldScrubber()
     print("="*60)
     print(">>> PARADOX: SOVEREIGN STRATEGIC INTERROGATOR <<<")
     print(">>>       - MANIFOLD: THE LAWS OF HUMAN NATURE")
@@ -25,8 +27,9 @@ def paradox_strategy_interrogator():
         print("[!] ERROR: Strategic Shard MISSING. Run PDF Ingestor first.")
         return
         
-    payload_clean = " ".join(payload_raw.split()).lower()
-    print(f"[*] Mind Residency: LOADED ({len(payload_raw)} char payload).")
+    # Phase XXXVIII: Clean-Sweep Sanitization
+    payload_raw = scrubber.clean_payload(payload_raw)
+    print(f"[*] Mind Residency: LOADED & SANITIZED ({len(payload_raw)} char payload).")
     print("[*] Ready for interrogation. Type 'exit' to leave.\n")
 
     while True:
@@ -63,20 +66,40 @@ def paradox_strategy_interrogator():
                 start_search = idx + len(kw) + 1
                 if start_search >= len(payload_raw): break
                 
-        # 4. Rank Globally
+        # 4. Global Wisdom-Seeker (Phase XLI: Nuclear TOC-Filter)
         all_scored_sentences.sort(key=lambda x: x[0], reverse=True)
+        
         seen = set()
-        unique_top = []
+        candidates = []
         for score, text in all_scored_sentences:
+            idx_in_payload = payload_raw.find(text)
+            
             if text not in seen and score > 2:
-                unique_top.append(text)
-                seen.add(text)
+                # NUCLEAR TOC PENALTY:
+                # Skip the first 100KB (TOC is here) and penalize short fragments
+                if idx_in_payload < 100000 or len(text) < 120:
+                    score -= 30 
                 
-        # 5. Presentation
-        response = " ".join(unique_top[:2]) if unique_top else ""
-        if response:
-            print(f"  [RESULT]: VERIFIED Strategic Manifold.")
-            print(f"  [PARADOX]: \"{response}\"\n")
+                # Linguistic Complexity Bonus
+                if text.count(" ") > 20: score += 2
+                
+                candidates.append((score, text))
+                seen.add(text)
+        
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        top_sentences = [c[1] for c in candidates if c[0] > 0] # Filter out penalized TOC
+        top_slice = " ".join(top_sentences[:25]) 
+        
+        # --- PHASE XXXVIII: THINKING LAYER (Synthesis) ---
+        wisdom = scrubber.extract_definition(top_slice, keywords)
+        strategy = scrubber.extract_advice(top_slice, keywords)
+        evidence = top_sentences[0] if top_sentences else "No chapter-level evidence found."
+        
+        # 5. Professional AGI Presentation
+        if wisdom != "Concept unverifiable.":
+            print(f"\n  [WISDOM]: {wisdom}")
+            print(f"  [STRATEGY]: {strategy}")
+            print(f"  [EVIDENCE]: \"{evidence[:250]}...\"\n")
         else:
             print(f"  [RESULT]: No verified signal for tokens {keywords}.\n")
 
