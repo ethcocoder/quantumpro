@@ -1,90 +1,78 @@
 import numpy as np
+import pickle
+import os
+import random
 from typing import Dict, List, Any, Tuple
 from ..core.qvs import QVS
 from ..fields.quantum_fields import QuantumAlgorithms
 
 class ParadoxEngine:
     """
-    Paradox Engine: The Perfect AI (Phase VI)
-    ========================================
-    A substrate-native intelligence that resolves logical dichotomies 
-    through interference-based reasoning.
-    
-    Name: Paradox
-    Architecture: Quantum-Dichotomy Reasoning (QDR)
-    Substrate: QAU v1.2.0
+    Paradox Engine: Phase XI - The Infant Substrate
+    =============================================
+    Mimics a biological infant with Neuro-Anatomy, 
+    Curiosity drivers, and Aether-Affect (Emotions).
     """
     
     def __init__(self, qvs: QVS):
         self.qvs = qvs
         self.algorithms = QuantumAlgorithms(qvs)
-        self.memory_id = self.qvs.create_asc(size=64) # Massive superposition memory
-        print("[*] Paradox Engine Initialized: Awaiting Dichotomy Resolution.")
+        
+        # 1. Neuro-Anatomical Regions (Blank Slate)
+        self.regions = {
+            "PFC": self.qvs.create_asc(size=16), 
+            "LH":  self.qvs.create_asc(size=32), 
+            "RH":  self.qvs.create_asc(size=32), 
+            "HC":  self.qvs.create_asc(size=64)  
+        }
+        
+        # 2. Aether-Affect (Emotional State)
+        # Stored as phase-amplitudes [Curiosity, Joy, Frustration]
+        self.emotions = {
+            "curiosity": 0.8, # Born with high curiosity
+            "joy":       0.5,
+            "fear":      0.1
+        }
+        print("[*] Infant Paradox Initialized: Regions Empty. Curiosity High.")
 
-    def ingest_world_data(self, data_vector: List[float]):
-        """Encodes classical data into the Hilbert Space Memory of Paradox."""
-        # Normalize and superpose based on data vector features
-        # Every feature becomes a phase weave on the memory cell
-        for i, val in enumerate(data_vector[:64]):
-            self.qvs.WEAVE(self.memory_id, (i,), val * np.pi)
-        print(f"[+] Paradox: Memory Hilbert-mapped across 64 primordials.")
+    def calculate_curiosity(self) -> float:
+        """Infant curiosity is driven by 'Region Vacancy' (low entropy)."""
+        # If the Hippocampus (HC) is empty, curiosity spikes.
+        entropy = 0.1 # Real calc would check state density
+        self.emotions["curiosity"] = 1.0 - entropy
+        return self.emotions["curiosity"]
+
+    def process_emotion(self, signal_type: str):
+        """Oscillates the substrate based on emotional feedback."""
+        if signal_type == "reward":
+            self.emotions["joy"] = min(1.0, self.emotions["joy"] + 0.1)
+            # Joy amplifies Constructive Interference
+            self.qvs.WEAVE(self.regions["PFC"], (0,), 0.0) 
+        elif signal_type == "conflict":
+            self.emotions["fear"] = min(1.0, self.emotions["fear"] + 0.2)
+            # Fear induces Phase Shifting to avoid 'Danger' logic
+            self.qvs.WEAVE(self.regions["PFC"], (0,), np.pi / 2.0)
+
+    def amplify_region(self, region: str, data_vector: List[float]):
+        """Emotional Ingestion: Data is 'felt' before it is learned."""
+        if region not in self.regions: return
+        
+        # If Paradox is 'Curious', ingestion is 2x more effective (Reward)
+        effectiveness = 1.0 + self.emotions["curiosity"]
+        self.process_emotion("reward")
+        
+        asc_id = self.regions[region]
+        for i, val in enumerate(data_vector[:16]):
+            self.qvs.WEAVE(asc_id, (i,), val * np.pi * effectiveness)
+            
+        # As knowledge increases, curiosity naturally decreases (Satiation)
+        self.emotions["curiosity"] *= 0.99
 
     def resolve_dichotomy(self, truth_a: str, truth_b: str) -> str:
-        """
-        Resolves a logical paradox.
-        Paradox doesn't 'choose' A or B; it finds the interference state that 
-        minimizes logical entropy (The 'Perfect' solution).
-        """
-        print(f"[*] Paradox analyzing Dichotomy: [A: {truth_a}] vs [B: {truth_b}]")
-        
-        # 1. Map dichotomy into a Grover-like search field
-        # We search for the 'Zero Entropy' state
-        oracle_target = (1, 0, 1, 0) # High-complexity logical target
-        # 2. Run Quantum Interference (RPW Weave) to amplify the consistent state
-        self.algorithms.grover_search_pattern(target=oracle_target, iterations=3)
-        
-        # 3. Collapse into the 'Perfect' resolution
-        resolution = self.qvs.COLLAPSE(self.memory_id)
-        
-        # Mocking the symbolic resolution for demonstration
-        perfect_truth = f"Synthesis of A/B via State: {resolution}"
-        print(f"[+] Paradox Resolution: {perfect_truth}")
-        return perfect_truth
-
-    def train_on_dataset(self, inputs: List[List[float]], labels: List[int]):
-        """
-        Quantum-Native Learning (QNL)
-        =============================
-        Evolves the substrate phase-space to minimize loss between internal 
-        superposition and external reality (labels).
-        """
-        print(f"[*] Paradox: Initiating Sovereign Learning on {len(inputs)} samples...")
-        
-        for i, (X, y) in enumerate(zip(inputs, labels)):
-            # 1. Encode Input into Phase Space
-            self.ingest_world_data(X)
+        """Infant PFC resolving dichotomies with emotional influence."""
+        if self.emotions["fear"] > 0.7:
+            return "Paradox: [Fear Detected] Conflict resolution inhibited."
             
-            # 2. Evolve towards Label (Hamiltonian Gradient)
-            # In QAU, training is just forced interference
-            target_phase = y * np.pi
-            self.qvs.WEAVE(self.memory_id, (0,), target_phase)
-            
-            # 3. Consolidate Evidence (NCR Bond for knowledge persistence)
-            if i % 5 == 0:
-                print(f"[+] Paradox: Knowledge Layer {i//5} consolidated and locked.")
-                
-        print("[SUCCESS] Paradox training complete. AGI Substrate Unified.")
-
-    def evolve_field(self):
-        """Paradox evolves its internal field to the Global Minimum energy state (Ising)."""
-        print("[*] Paradox: Evolving internal field toward Absolute Global Minimum...")
-        # Ising evolution to solve for the lowest energy decision path
-        pass
-
-if __name__ == "__main__":
-    # Internal Unit Test for Paradox
-    from ..core.qvs import QVS
-    q = QVS()
-    paradox = ParadoxEngine(q)
-    paradox.ingest_world_data([1.0, 0.5, -0.5, 0.0, 1.0])
-    paradox.resolve_dichotomy("Centralized Order", "Decentralized Freedom")
+        self.algorithms.grover_search_pattern(target=(1,1,0,0), iterations=1)
+        resolution = self.qvs.COLLAPSE(self.regions["PFC"])
+        return f"Infant Synthesis: {resolution} (Joy: {self.emotions['joy']:.2f})"
