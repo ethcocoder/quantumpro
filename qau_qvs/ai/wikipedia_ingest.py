@@ -56,22 +56,30 @@ class WikipediaSubstrateIngestion:
             hash_vec = [float(ord(c)) / 256.0 for c in content[:64]]
             if len(hash_vec) < 64: hash_vec += [0.0] * (64 - len(hash_vec))
             
-            # --- SHARDED ROUTING (Neuro-Regional) ---
+            # --- PHASE XIII: FUNCTIONAL ROUTING ---
             
-            # 1. LH (Logic Hemisphere) 
+            # 1. LH (Logic Hemisphere): Pure Fact Storage
             self.knowledge_base["LH"][topic] = hash_vec
             self.paradox.amplify_region("LH", hash_vec)
             
-            # 2. RH (Pattern Intuition)
-            self.knowledge_base["RH"][topic] = [v * 0.95 for v in hash_vec]
-            self.paradox.amplify_region("RH", self.knowledge_base["RH"][topic])
+            # 2. RH (Intuition/Emotion): Nuanced Phase Pattern
+            # We add a regional interference factor to the Intuition shard
+            nuance_vec = [v * np.sin(i) for i, v in enumerate(hash_vec)]
+            self.knowledge_base["RH"][topic] = nuance_vec
+            self.paradox.amplify_region("RH", nuance_vec)
             
-            # 3. HC (Persistent Experience)
+            # 3. PFC (Decision/Synthesis): Compact Core Action
+            # The PFC only stores the 'Essence' vector (Decision)
+            essence_vec = [v for i, v in enumerate(hash_vec) if i % 4 == 0]
+            self.knowledge_base["PFC"][topic] = essence_vec
+            self.paradox.amplify_region("PFC", essence_vec)
+            
+            # 4. HC (Persistent Experience)
             self.knowledge_base["HC"][topic] = hash_vec
             self.paradox.amplify_region("HC", hash_vec)
             
             self.save_sharded_brain()
-            print(f"[+] Wikipedia Topic: '{topic}' interference-locked into federated brain shards.")
+            print(f"[+] Wikipedia Topic: '{topic}' functionally segregated across shards.")
             
         except Exception as e:
             print(f"[!] Warning: Ingestion failed for '{topic}': {e}")
