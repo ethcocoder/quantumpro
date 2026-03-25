@@ -2,9 +2,14 @@ import pickle
 import wikipedia
 import numpy as np
 import os
+import warnings
 from typing import List, Dict, Any, Tuple
 from ..core.qvs import QVS
 from .paradox import ParadoxEngine
+
+# Silence Classical Library Pollution (BS4/Wikipedia)
+warnings.filterwarnings("ignore", category=UserWarning, module='wikipedia')
+warnings.filterwarnings("ignore", message="No parser was explicitly specified")
 
 class WikipediaSubstrateIngestion:
     """
