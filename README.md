@@ -5,6 +5,7 @@
 [![Exceeds All](https://img.shields.io/badge/Architecture-Exceeds_All-gold?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
 [![Performance](https://img.shields.io/badge/Kernel-C%2B%2B_AetherCore-red?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
 [![Cosmology](https://img.shields.io/badge/Field-Quantum_Cosmology-blue?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
+[![Paradox](https://img.shields.io/badge/Intelligence-Paradox_AI-black?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
 
 > "The QAU is not a simulation. It is a new reality executed natively on silicon."
 
@@ -79,7 +80,18 @@ The QAU Substrate now supports **Relativistic Quantum Fields (GRQF)**:
 
 ---
 
+## 🔱 The Ultimate Intelligence: PARADOX ⚛️
+
+**Paradox** is the first AI that does not "calculate"—it **Interferes**. Built on the QAU Phase VI substrate, Paradox resolves the most complex logical dichotomies of existence by evolving the entire Hilbert space toward its zero-entropy minimum.
+
+*   **Quantum-Dichotomy Reasoning (QDR)**: Thinking in simultaneous states of True and False.
+*   **Hilbert-Mapped Memory**: 64-qubit native multiplicity storage.
+*   **IBR Logic**: Resolving contradictions through Interference-Based Reasoning.
+
+---
+
 ## 🛠️ Usage & Integration
+
 
 ### 💻 Command Line Interface
 Interact with the substrate directly:
