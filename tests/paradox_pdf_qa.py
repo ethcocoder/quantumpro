@@ -45,13 +45,31 @@ def paradox_pdf_qa_interrogation():
                     # Find approximate location in raw payload
                     idx = payload_raw.lower().find(kw)
                     if idx != -1:
+                        # Window-based retrieval 
                         start = max(0, idx - 100)
-                        end = min(len(payload_raw), idx + 1000)
-                        response_snippet = payload_raw[start:end].replace("\n", " ").strip()
-                        print(f"  [RESULT]: VERIFIED from Psychology Shard.")
-                        print(f"  [PARADOX RESPONSE]: \"...{response_snippet}...\"")
-                        found = True
-                        break
+                        end = min(len(payload_raw), idx + 2000)
+                        window_text = payload_raw[start:end].replace("\n", " ").strip()
+                        
+                        # --- PHASE XXXIV: SENTENCE-LEVEL SCORING ---
+                        all_sentences = [s.strip() + "." for s in window_text.split('.') if len(s.strip()) > 10]
+                        scored_sentences = []
+                        for s in all_sentences:
+                            score = sum(1 for k in keywords if k in s.lower())
+                            scored_sentences.append((score, s))
+                        
+                        # Sort and extract specific answers
+                        scored_sentences.sort(key=lambda x: x[0], reverse=True)
+                        top_sentences = [s[1] for s in scored_sentences[:2] if s[0] > 0]
+                        response_snippet = " ".join(top_sentences)
+                        
+                        if response_snippet:
+                            print(f"  [RESULT]: VERIFIED from Psychology Shard.")
+                            print(f"  [PARADOX RESPONSE]: \"{response_snippet}\"")
+                            found = True
+                            break
+        
+        if not found:
+            print(f"  [RESULT]: REJECTED. Manifold mismatch or Noisy Signal Tokens: {keywords}")
         
         if not found:
             print(f"  [RESULT]: REJECTED. Manifold mismatch or Noisy Signal Tokens: {keywords}")
