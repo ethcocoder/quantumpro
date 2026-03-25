@@ -18,11 +18,11 @@ class ParadoxEngine:
         self.qvs = qvs
         self.algorithms = QuantumAlgorithms(qvs)
         
-        # 1. Neuro-Anatomical Regions (Blank Slate)
+        # 1. Neuro-Anatomical Regions (Full-Fidelity: 64 facets)
         self.regions = {
-            "PFC": self.qvs.create_asc(size=16), 
-            "LH":  self.qvs.create_asc(size=32), 
-            "RH":  self.qvs.create_asc(size=32), 
+            "PFC": self.qvs.create_asc(size=64), 
+            "LH":  self.qvs.create_asc(size=64), 
+            "RH":  self.qvs.create_asc(size=64), 
             "HC":  self.qvs.create_asc(size=64)  
         }
         
@@ -62,7 +62,7 @@ class ParadoxEngine:
         self.process_emotion("reward")
         
         asc_id = self.regions[region]
-        for i, val in enumerate(data_vector[:16]):
+        for i, val in enumerate(data_vector):
             self.qvs.WEAVE(asc_id, (i,), val * np.pi * effectiveness)
             
         # As knowledge increases, curiosity naturally decreases (Satiation)

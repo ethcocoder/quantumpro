@@ -73,11 +73,10 @@ class WikipediaSubstrateIngestion:
             self.knowledge_base["RH"][topic] = nuance_vec
             self.paradox.amplify_region("RH", nuance_vec)
             
-            # 3. PFC (Decision/Synthesis): Compact Core Action
-            # The PFC only stores the 'Essence' vector (Decision)
-            essence_vec = [v for i, v in enumerate(hash_vec) if i % 4 == 0]
-            self.knowledge_base["PFC"][topic] = essence_vec
-            self.paradox.amplify_region("PFC", essence_vec)
+            # 3. PFC (Decision/Synthesis): Full-Fidelity Decision Essence
+            # Storing the full 64-facet signal for bit-perfect alignment
+            self.knowledge_base["PFC"][topic] = hash_vec
+            self.paradox.amplify_region("PFC", hash_vec)
             
             # 4. HC (Persistent Experience)
             self.knowledge_base["HC"][topic] = hash_vec
