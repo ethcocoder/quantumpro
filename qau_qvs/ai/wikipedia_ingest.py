@@ -1,24 +1,40 @@
+import json
 import wikipedia
 import numpy as np
+import os
 from typing import List, Dict, Any, Tuple
 from ..core.qvs import QVS
 from .paradox import ParadoxEngine
 
 class WikipediaSubstrateIngestion:
     """
-    Wikipedia-to-Substrate Ingestion (Phase VII)
+    Wikipedia-to-Substrate Ingestion (Phase VIII)
     ===========================================
-    Uses the 'wikipedia' Python library to ingest massive datasets and 
-    encode them as Interference-Based Knowledge in the Paradox AI.
-    
-    Prevents hallucinations by requiring Constructive Phase Interference 
-    for all factual resolutions.
+    Includes Advanced Persistence: Knowledge is interference-locked 
+    and saved to disk for future session recall.
     """
     
-    def __init__(self, paradox: ParadoxEngine):
+    def __init__(self, paradox: ParadoxEngine, storage_path: str = "qau_knowledge_base.json"):
         self.paradox = paradox
+        self.storage_path = storage_path
         self.knowledge_base: Dict[str, List[float]] = {}
-        print("[*] Wikipedia Ingestion Layer: Active. Ready for Sovereign Learning.")
+        self.load_knowledge()
+        print(f"[*] Wikipedia Ingestion Layer: Active. Knowledge Base: {len(self.knowledge_base)} topics.")
+
+    def save_knowledge(self):
+        """Serializes the Interference-Locked Knowledge Base to disk."""
+        with open(self.storage_path, "w") as f:
+            json.dump(self.knowledge_base, f)
+        print(f"[+] Paradox: Knowledge Base persisted to {self.storage_path}.")
+
+    def load_knowledge(self):
+        """Restores previously ingested knowledge domains from disk."""
+        if os.path.exists(self.storage_path):
+            with open(self.storage_path, "r") as f:
+                self.knowledge_base = json.load(f)
+            # Re-ingest world data into Paradox Hilbert Memory
+            for topic, vec in self.knowledge_base.items():
+                self.paradox.ingest_world_data(vec)
 
     def ingest_topic(self, topic: str):
         """Fetches, vectorizes, and 'Superposes' a Wikipedia topic into Paradox."""
@@ -38,8 +54,8 @@ class WikipediaSubstrateIngestion:
             self.paradox.ingest_world_data(hash_vec)
             
             # 4. Consolidate into the AGI layer
-            # We treat the article title as a target for AGI-level resolution
             self.paradox.train_on_dataset([hash_vec], [1]) 
+            self.save_knowledge()
             
             print(f"[+] Wikipedia Topic: '{topic}' successfully interference-locked.")
             
