@@ -45,6 +45,16 @@ namespace Aether {
         }
     }
 
+    void SubstrateEngine::superpose(const std::string& id, const std::vector<BasisState>& states) {
+        if (ascs.find(id) == ascs.end()) return;
+        ASC& target = ascs[id];
+        target.amplitudes.clear();
+        double initial_weight = 1.0 / std::sqrt((double)states.size());
+        for (const auto& s : states) {
+            target.amplitudes[s] = {initial_weight, 0.0};
+        }
+    }
+
     /**
      * @brief Advanced Cosmological Feature: Curved Metric Influence
      * 

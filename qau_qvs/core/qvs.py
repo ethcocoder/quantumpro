@@ -9,24 +9,26 @@ except (ImportError, ModuleNotFoundError):
     from .asc import ASC
     from .rpw import RPW
     from .ncb import NCB
+from qau_qvs.hal.hal import QuantumHAL
 
 class QVS:
     """
-    Quantum Virtual Substrate (QVS) - ADVANCED v1.1.0
+    Quantum Virtual Substrate (QVS) - ADVANCED v1.2.0
     ================================================
     The foundational OPERATING SYSTEM LAYER for the QAU.
     
     Includes Advanced Features:
     - JIT Unitary Fusion (Instruction optimization)
     - Quantum Trajectory Monte Carlo (Scalable simulation)
-    - Instruction Layering for Field Stability
+    - Hardware Abstraction Layer (HAL) Phase V - Gate Translation
     """
     
-    def __init__(self):
+    def __init__(self, use_hal: bool = False):
         self.ascs: Dict[str, ASC] = {} 
         self.next_id = 0
         self.instruction_history: List[Dict[str, Any]] = []
         self.pending_rotations: Dict[str, List[np.ndarray]] = {} # For JIT fusion
+        self.hal: Optional[QuantumHAL] = QuantumHAL() if use_hal else None
 
     # ------------------------------------------------------------------
     # Resource Management
@@ -91,18 +93,33 @@ class QVS:
         asc = self.get_asc(asc_id)
         weight = 1.0 / np.sqrt(len(basis_states))
         asc.amplitudes = {tuple(state): complex(weight) for state in basis_states}
+        
+        if self.hal:
+            # Shadow-buffer superposition instructions
+            self.hal.translate_superpose(list(range(asc.size)))
+            
         return asc_id
 
     def WEAVE(self, asc_id: str, target_bits: Optional[Tuple[int, ...]] = None, phase_angle: float = 0.0) -> str:
         asc = self.get_asc(asc_id)
         bits = target_bits if target_bits is not None else (0,)
         RPW.weave(asc, bits, {1: phase_angle})
+        
+        if self.hal:
+            # Shadow-buffer weave instructions
+            self.hal.translate_weave(list(bits), phase_angle)
+            
         return asc_id
 
     def BOND(self, asc_id_a: str, asc_id_b: str, bond_type: str = "bell") -> str:
         asc_a = self.get_asc(asc_id_a)
         asc_b = self.get_asc(asc_id_b)
         bonded_asc = NCB.bond(asc_a, asc_b, bond_type)
+        
+        if self.hal:
+            # Shadow-buffer entanglement instructions
+            self.hal.translate_bond(0, 1, bond_type) # Simplified mapping
+            
         self.delete_asc(asc_id_a)
         self.delete_asc(asc_id_b)
         return self.create_asc(bonded_asc.amplitudes, bonded_asc.size)
