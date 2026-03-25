@@ -89,9 +89,18 @@ class WikipediaSubstrateIngestion:
             print(f"[!] Warning: Ingestion failed for '{topic}': {e}")
 
     def query_fact(self, prompt: str) -> Tuple[bool, str]:
-        """Verify fact across the Logic Hemisphere (LH) shard."""
-        prompt_words = set(prompt.lower().split())
+        """Verify fact across the Logic Hemisphere (LH) shard using Strict SSI."""
+        stop_words = {"the", "is", "of", "a", "an", "and", "in", "what", "explain", "about", "tell", "me"}
+        prompt_words = {w.lower() for w in prompt.lower().split() if w.lower() not in stop_words}
+        
+        if not prompt_words:
+            return False, "Query too noisy. No significant semantic tokens found."
+
         for topic, vec in self.knowledge_base["LH"].items():
-            if topic.lower() in prompt.lower() or set(topic.lower().split()).intersection(prompt_words):
+            topic_words = {w.lower() for w in topic.lower().split() if w.lower() not in stop_words}
+            
+            # Strict Intersection: At least one substantial keyword must match
+            if topic.lower() in prompt.lower() or topic_words.intersection(prompt_words):
                 return True, f"Verified from LH Shard (Topic: {topic})"
+                
         return False, "Conflict detected. Signal does not constructively interfere with LH knowledge shard."
