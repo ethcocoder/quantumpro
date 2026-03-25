@@ -129,8 +129,13 @@ class WikipediaSubstrateIngestion:
             print(f"[!] Warning: Ingestion failed for '{topic}': {e}")
 
     def query_fact(self, prompt: str) -> Tuple[bool, str]:
-        """Verify fact across the Logic Hemisphere (LH) shard using Strict SSI."""
-        stop_words = {"the", "is", "of", "a", "an", "and", "in", "what", "explain", "about", "tell", "me"}
+        """Verify fact with Generic-Token Neutralization (Phase XXVIII)."""
+        # We ignore domain-generic words that cause 'Semantic Collision'
+        stop_words = {
+            "the", "is", "of", "a", "an", "and", "in", "what", "explain", "about", 
+            "tell", "me", "how", "do", "we", "we", "law", "theory", "study", 
+            "nature", "laws", "about"
+        }
         prompt_words = {w.lower() for w in prompt.lower().split() if w.lower() not in stop_words}
         
         if not prompt_words:
@@ -139,8 +144,18 @@ class WikipediaSubstrateIngestion:
         for topic, vec in self.knowledge_base["LH"].items():
             topic_words = {w.lower() for w in topic.lower().split() if w.lower() not in stop_words}
             
-            # Strict Intersection: At least one substantial keyword must match
-            if topic.lower() in prompt.lower() or topic_words.intersection(prompt_words):
+            # --- PHASE XXVII: RATIO-BASED VERIFICATION ---
+            intersection = topic_words.intersection(prompt_words)
+            
+            # Direct Title Match or High-Density Intersection
+            if topic.lower() in prompt.lower() or (len(intersection) / max(len(topic_words), 1) >= 0.3):
                 return True, f"Verified from LH Shard (Topic: {topic})"
+            
+            # --- PHASE XXIX: DEEP-MANIFOLD DISCOVERY (Fallback) ---
+            payload = self.payload_base["LH"].get(topic, "")
+            # If prompt has a unique keyword present in the payload, we verify the source
+            payload_words = {w.lower() for w in prompt_words if w.lower() in payload.lower()}
+            if len(payload_words) >= 1: # At least one unique keyword verified in text
+                return True, f"Verified from LH Deep-Payload (Topic: {topic})"
                 
-        return False, "Conflict detected. Signal does not constructively interfere with LH knowledge shard."
+        return False, f"Conflict detected (Tokens: {prompt_words}). Signal does not constructively interfere."
