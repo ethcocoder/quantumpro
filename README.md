@@ -2,7 +2,9 @@
 
 [![Substrate Engine](https://img.shields.io/badge/Substrate-QVS_v1.0.0-blueviolet?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
 [![Quantum Primordials](https://img.shields.io/badge/Primordials-ASC_RPW_NCB-cyan?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
-[![Aether Mesh](https://img.shields.io/badge/Status-Active_Mesh-green?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
+[![Exceeds All](https://img.shields.io/badge/Architecture-Exceeds_All-gold?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
+[![Performance](https://img.shields.io/badge/Kernel-C%2B%2B_AetherCore-red?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
+[![Cosmology](https://img.shields.io/badge/Field-Quantum_Cosmology-blue?style=for-the-badge)](https://github.com/ethcocoder/quantumpro)
 
 > "The QAU is not a simulation. It is a new reality executed natively on silicon."
 
@@ -63,6 +65,17 @@ graph TD
 *   **Entanglement-Locked Channels (ELC)**: Instantaneous, un-eavesdroppable key generation using E91-standard NCB bonds.
 *   **Quantum Predictive Engine (QPE)**: Solving NP-hard optimization problems via Ising Hamiltonian evolution.
 *   **Measurement-First Trajectories**: Running statistically exact quantum simulations at linear speeds.
+
+---
+
+## 🌌 Advanced Field Theories: Cosmology & GR
+
+The QAU Substrate now supports **Relativistic Quantum Fields (GRQF)**:
+
+*   **FRW Spacetime Expansion**: Simulate quantum fluctuations in an expanding Friedmann-Robertson-Walker metric.
+*   **Event Horizon Dynamics**: Hawking-Unruh thermal effects and information paradox resolution.
+*   **Inflationary Multiplicity**: Modeling the Big Bang as a massive inflationary ASC superposition collapse.
+
 
 ---
 
