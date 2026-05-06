@@ -77,9 +77,16 @@ def train(base_model=None, dataset_path=None, output_dir=None,
     model = get_peft_model(model, lora_config)
     
     # ── Hard Force: T4 Compatibility ─────────────────────────────────
-    print("[*] Hard-casting model parameters to float16...")
-    model = model.to(torch.float16)
-    print(f"[*] Verified Model Dtype: {next(model.parameters()).dtype}")
+    print("[*] Hard-casting model parameters and config to float16...")
+    model.config.torch_dtype = torch.float16
+    for name, param in model.named_parameters():
+        if param.dtype == torch.bfloat16:
+            param.data = param.data.to(torch.float16)
+    for name, buffer in model.named_buffers():
+        if buffer.dtype == torch.bfloat16:
+            buffer.data = buffer.data.to(torch.float16)
+    
+    print(f"[*] Verified Model Config Dtype: {model.config.torch_dtype}")
     
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total = sum(p.numel() for p in model.parameters())
