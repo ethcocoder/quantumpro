@@ -89,6 +89,7 @@ def train(base_model=None, dataset_path=None, output_dir=None,
 
     if HAS_SFT_CONFIG:
         print("[4/5] Using SFTConfig (trl v0.12+)...")
+        # Initialize with core arguments, then set SFT-specifics as attributes for safety
         training_args = SFTConfig(
             output_dir=output_dir,
             num_train_epochs=epochs,
@@ -105,15 +106,17 @@ def train(base_model=None, dataset_path=None, output_dir=None,
             save_steps=CONFIG.training.save_steps,
             save_total_limit=3,
             report_to="none",
-            max_seq_length=max_seq_length,
-            dataset_text_field="text",
-            packing=True,
-            processing_class=tokenizer, # trl v0.12+ style
         )
+        # Manually set SFT-specific attributes to bypass constructor quirks
+        training_args.max_seq_length = max_seq_length
+        training_args.dataset_text_field = "text"
+        training_args.packing = True
+        
         trainer = SFTTrainer(
             model=model,
             args=training_args,
             train_dataset=dataset,
+            processing_class=tokenizer,
         )
     else:
         print("[4/5] Using Legacy SFTTrainer (pre-trl v0.12)...")
