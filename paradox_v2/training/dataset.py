@@ -232,11 +232,20 @@ class TrainingDatasetBuilder:
                     continue
                 try:
                     entry = json.loads(line)
+                    
+                    # ── Smart Mapping for HF Datasets ────────────────
+                    # Check for various common instruction/response keys
+                    instruction = entry.get("instruction") or entry.get("question") or entry.get("text", "")[:200]
+                    response = entry.get("response") or entry.get("answer") or entry.get("content") or entry.get("text", "")[200:1200]
+                    
+                    if not instruction or not response or len(str(response)) < 20:
+                        continue
+
                     self.examples.append({
                         "text": format_training_example(
-                            instruction=entry["instruction"],
-                            context=entry.get("context", ""),
-                            response=entry["response"],
+                            instruction=str(instruction),
+                            context=str(entry.get("context", "")),
+                            response=str(response),
                             region=entry.get("region", "PFC"),
                         ),
                         "region": entry.get("region", "PFC"),

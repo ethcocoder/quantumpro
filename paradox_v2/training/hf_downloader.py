@@ -20,7 +20,7 @@ class HFDataPipeline:
         """
         print(f"[HF] Downloading {dataset_name} ({subset})...")
         try:
-            ds = load_dataset(dataset_name, subset, split=f"{split}[:{limit}]", trust_remote_code=True)
+            ds = load_dataset(dataset_name, subset, split=f"{split}[:{limit}]")
             
             # Save as JSONL for the Paradox Dataset Builder
             output_path = os.path.join(self.output_dir, f"{dataset_name}_{subset}.jsonl")
