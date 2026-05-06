@@ -12,3 +12,8 @@ env/
 dist/
 build/
 *.egg-info/
+paradox_v2_data/
+paradox_qlora_checkpoints/
+paradox_brain/*.pkl
+paradox_brain/*.para
+data/

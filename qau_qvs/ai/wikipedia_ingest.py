@@ -94,7 +94,13 @@ class WikipediaSubstrateIngestion:
             # High-Volume: Fetching the ENTIRE page content
             page = wikipedia.page(topic)
             content = page.content # Potentially MBs of data
-            
+            self.ingest_manifold(topic, content)
+        except Exception as e:
+            print(f"[!] Warning: Ingestion failed for '{topic}': {e}")
+
+    def ingest_manifold(self, topic: str, content: str):
+        """Phase XLII: Sovereign Manifold Ingestion. Shards any content across the AGI brain."""
+        try:
             # Create Hilbert-mapped Fingerprint
             hash_vec = [float(ord(c)) / 256.0 for c in content[:64]]
             if len(hash_vec) < 64: hash_vec += [0.0] * (64 - len(hash_vec))
@@ -123,10 +129,10 @@ class WikipediaSubstrateIngestion:
             self.paradox.amplify_region("HC", hash_vec)
             
             self.save_sharded_brain()
-            print(f"[+] Wikipedia Topic: '{topic}' fully saturated across shards.")
+            print(f"[+] Manifold Topic: '{topic}' fully saturated across shards.")
             
         except Exception as e:
-            print(f"[!] Warning: Ingestion failed for '{topic}': {e}")
+            print(f"[!] Warning: Manifold Saturation failed for '{topic}': {e}")
 
     def query_fact(self, prompt: str) -> Tuple[bool, str]:
         """Verify fact with Generic-Token Neutralization (Phase XXVIII)."""
