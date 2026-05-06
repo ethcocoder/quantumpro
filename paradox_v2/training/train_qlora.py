@@ -99,8 +99,8 @@ def train(base_model=None, dataset_path=None, output_dir=None,
             lr_scheduler_type=CONFIG.training.lr_scheduler_type,
             warmup_ratio=CONFIG.training.warmup_ratio,
             optim=CONFIG.training.optim,
-            fp16=False,
-            bf16=True,
+            fp16=True,
+            bf16=False,
             gradient_checkpointing=True,
             logging_steps=CONFIG.training.logging_steps,
             save_steps=CONFIG.training.save_steps,
@@ -108,7 +108,7 @@ def train(base_model=None, dataset_path=None, output_dir=None,
             report_to="none",
         )
         # Manually set SFT-specific attributes to bypass constructor quirks
-        training_args.max_seq_length = max_seq_length
+        training_args.max_seq_length = 1024
         training_args.dataset_text_field = "text"
         training_args.packing = True
         
@@ -130,8 +130,8 @@ def train(base_model=None, dataset_path=None, output_dir=None,
             lr_scheduler_type=CONFIG.training.lr_scheduler_type,
             warmup_ratio=CONFIG.training.warmup_ratio,
             optim=CONFIG.training.optim,
-            fp16=False,
-            bf16=True,
+            fp16=True,
+            bf16=False,
             gradient_checkpointing=True,
             logging_steps=CONFIG.training.logging_steps,
             save_steps=CONFIG.training.save_steps,
@@ -143,7 +143,7 @@ def train(base_model=None, dataset_path=None, output_dir=None,
             args=training_args,
             train_dataset=dataset,
             tokenizer=tokenizer,
-            max_seq_length=max_seq_length,
+            max_seq_length=1024,
             dataset_text_field="text",
             packing=True,
         )
