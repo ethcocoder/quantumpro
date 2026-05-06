@@ -29,29 +29,11 @@ Execute the master Colab script. This single command handles:
 !python -m paradox_v2.colab_run
 ```
 
-## 3. Manual Testing (Optional)
-If you want to ask Paradox specific questions after training:
+## 3. Manual Testing
+After training, you can query Paradox directly from the command line:
 
 ```python
-import os
-from paradox_v2.llm.backbone import ParadoxBackbone
-from paradox_v2.llm.generator import ParadoxGenerator
-
-# Initialize
-backbone = ParadoxBackbone()
-adapter_path = "paradox_qlora_checkpoints/final_adapter"
-
-# Load the trained adapter
-if os.path.exists(adapter_path):
-    backbone.load_adapter(adapter_path)
-    generator = ParadoxGenerator(backbone=backbone)
-
-    # Ask a question
-    query = "How does the QAU resolve logical dichotomies?"
-    response = generator.generate(query=query, region="PFC")
-    print(f"\n[PARADOX]: {response}")
-else:
-    print("Training not yet complete.")
+!python -m paradox_v2.test_inference "How does the QAU resolve logical dichotomies?" --region "PFC"
 ```
 
 ## 📊 Expected Performance on T4
