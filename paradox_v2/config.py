@@ -83,7 +83,7 @@ class TrainingConfig:
     max_seq_length: int = 1024
     gradient_checkpointing: bool = True
     optim: str = "paged_adamw_8bit"
-    fp16: bool = True
+    fp16: bool = False
     bf16: bool = False
     logging_steps: int = 10
     save_steps: int = 100
