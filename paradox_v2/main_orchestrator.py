@@ -71,7 +71,9 @@ def run_production_upgrade(skip_ingest=False, skip_train=False, data_limit=1000)
         adapter_path = train(
             dataset_path=dataset_path,
             epochs=CONFIG.training.epochs,
-            batch_size=CONFIG.training.per_device_batch_size
+            batch_size=CONFIG.training.per_device_batch_size,
+            learning_rate=CONFIG.training.learning_rate,
+            max_seq_length=CONFIG.training.max_seq_length
         )
     else:
         adapter_path = os.path.join(CONFIG.training.output_dir, "final_adapter")

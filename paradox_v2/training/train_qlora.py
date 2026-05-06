@@ -75,6 +75,12 @@ def train(base_model=None, dataset_path=None, output_dir=None,
         target_modules=CONFIG.model.lora_target_modules, bias="none", task_type="CAUSAL_LM",
     )
     model = get_peft_model(model, lora_config)
+    
+    # ── Hard Force: T4 Compatibility ─────────────────────────────────
+    print("[*] Hard-casting model parameters to float16...")
+    model = model.to(torch.float16)
+    print(f"[*] Verified Model Dtype: {next(model.parameters()).dtype}")
+    
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total = sum(p.numel() for p in model.parameters())
     print(f"  Trainable: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
