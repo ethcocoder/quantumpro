@@ -79,25 +79,73 @@ def train(base_model=None, dataset_path=None, output_dir=None,
     total = sum(p.numel() for p in model.parameters())
     print(f"  Trainable: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
 
-    # Training
-    training_args = TrainingArguments(
-        output_dir=output_dir, num_train_epochs=epochs,
-        per_device_train_batch_size=batch_size,
-        gradient_accumulation_steps=CONFIG.training.gradient_accumulation_steps,
-        learning_rate=learning_rate, lr_scheduler_type=CONFIG.training.lr_scheduler_type,
-        warmup_ratio=CONFIG.training.warmup_ratio, optim=CONFIG.training.optim,
-        fp16=False, bf16=True, gradient_checkpointing=True,
-        logging_steps=CONFIG.training.logging_steps, save_steps=CONFIG.training.save_steps,
-        save_total_limit=3, report_to="none", remove_unused_columns=False,
-        dataloader_pin_memory=False,
-    )
+    # ── Training Configuration (TRL Version Aware) ───────────────────
+    from trl import SFTTrainer
+    try:
+        from trl import SFTConfig
+        HAS_SFT_CONFIG = True
+    except ImportError:
+        HAS_SFT_CONFIG = False
 
-    print("[4/5] Starting training...")
-    trainer = SFTTrainer(
-        model=model, args=training_args, train_dataset=dataset,
-        tokenizer=tokenizer, max_seq_length=max_seq_length,
-        dataset_text_field="text", packing=True,
-    )
+    if HAS_SFT_CONFIG:
+        print("[4/5] Using SFTConfig (trl v0.12+)...")
+        training_args = SFTConfig(
+            output_dir=output_dir,
+            num_train_epochs=epochs,
+            per_device_train_batch_size=batch_size,
+            gradient_accumulation_steps=CONFIG.training.gradient_accumulation_steps,
+            learning_rate=learning_rate,
+            lr_scheduler_type=CONFIG.training.lr_scheduler_type,
+            warmup_ratio=CONFIG.training.warmup_ratio,
+            optim=CONFIG.training.optim,
+            fp16=False,
+            bf16=True,
+            gradient_checkpointing=True,
+            logging_steps=CONFIG.training.logging_steps,
+            save_steps=CONFIG.training.save_steps,
+            save_total_limit=3,
+            report_to="none",
+            max_seq_length=max_seq_length,
+            dataset_text_field="text",
+            packing=True,
+            processing_class=tokenizer, # trl v0.12+ style
+        )
+        trainer = SFTTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=dataset,
+        )
+    else:
+        print("[4/5] Using Legacy SFTTrainer (pre-trl v0.12)...")
+        from transformers import TrainingArguments
+        training_args = TrainingArguments(
+            output_dir=output_dir,
+            num_train_epochs=epochs,
+            per_device_train_batch_size=batch_size,
+            gradient_accumulation_steps=CONFIG.training.gradient_accumulation_steps,
+            learning_rate=learning_rate,
+            lr_scheduler_type=CONFIG.training.lr_scheduler_type,
+            warmup_ratio=CONFIG.training.warmup_ratio,
+            optim=CONFIG.training.optim,
+            fp16=False,
+            bf16=True,
+            gradient_checkpointing=True,
+            logging_steps=CONFIG.training.logging_steps,
+            save_steps=CONFIG.training.save_steps,
+            save_total_limit=3,
+            report_to="none",
+        )
+        trainer = SFTTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=dataset,
+            tokenizer=tokenizer,
+            max_seq_length=max_seq_length,
+            dataset_text_field="text",
+            packing=True,
+        )
+
+    print("[*] Starting training loop...")
     trainer.train(resume_from_checkpoint=resume_from if resume_from and os.path.exists(resume_from) else None)
 
     # Save
