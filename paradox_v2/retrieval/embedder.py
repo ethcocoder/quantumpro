@@ -29,6 +29,12 @@ class ParadoxEmbedder:
     @property
     def model(self):
         if self._model is None:
+            self._load()
+        return self._model
+
+    def _load(self):
+        """Lazy load the transformer model."""
+        if self._model is None:
             try:
                 from sentence_transformers import SentenceTransformer
             except ImportError:
@@ -37,12 +43,13 @@ class ParadoxEmbedder:
                     "Install: pip install sentence-transformers"
                 )
             print(f"[EMBEDDER] Loading encoder: {self.model_name} ...")
-            kwargs = {}
-            if self.device:
-                kwargs["device"] = self.device
-            self._model = SentenceTransformer(self.model_name, **kwargs)
-            print(f"[EMBEDDER] Encoder ready. Dim={self._model.get_sentence_embedding_dimension()}")
-        return self._model
+            
+            # Load model
+            self._model = SentenceTransformer(self.model_name, device=self.device)
+            
+            # Use updated method name to avoid FutureWarnings
+            self.dimension = self._model.get_embedding_dimension()
+            print(f"[EMBEDDER] Encoder ready. Dim={self.dimension}")
 
     # ── Encode ───────────────────────────────────────────────────────
     def encode(
